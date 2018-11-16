@@ -2,6 +2,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * An example showing how to send HTTP GET and read the response from the server
@@ -56,6 +59,7 @@ public class SendRequest {
                 stream.close();
                 System.out.println("Response from the server:");
                 System.out.println(responseBody);
+                JSONParser(responseBody);
             } else {
                 String responseDescription = con.getResponseMessage();
                 System.out.println("Request failed, response code: " + responseCode + " (" + responseDescription + ")");
@@ -65,6 +69,16 @@ public class SendRequest {
         } catch (IOException e) {
             System.out.println("Something went wrong: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private void JSONParser(String stuff) {
+        try {
+            JSONObject jsonObject = new JSONObject(stuff);
+            System.out.println(jsonObject.toString());
+        }
+        catch (JSONException e) {
+            System.out.println("Got exception in JSON parsing: " + e.getMessage());
         }
     }
 
