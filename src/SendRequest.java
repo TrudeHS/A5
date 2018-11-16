@@ -14,6 +14,24 @@ public class SendRequest {
     public static void main(String[] args) {
         SendRequest example = new SendRequest("104.248.47.74", 80);
         example.doExampleGet();
+        example.post2RandomNumbers();
+
+        //get 1
+
+    }
+
+
+    public void post2RandomNumbers() {
+        int a = (int) Math.round(Math.random() * 100);
+        int b = (int) Math.round(Math.random() * 100);
+
+        JSONObject json = new JSONObject();
+        json.put("a", a);
+        json.put("b", b);
+        System.out.println("Posting this JSON data to server");
+        System.out.println(json.toString());
+        // TODO: change path to something correct
+        sendPost("dkrest/test/post ", json);
     }
 
     private String BASE_URL; // Base URL (address) of the server
@@ -100,5 +118,49 @@ public class SendRequest {
             System.out.println("Could not read the data from HTTP response: " + ex.getMessage());
         }
         return response.toString();
+    }
+
+
+    /**
+     * Send HTTP POST
+     *
+     * @param path     Relative path in the API.
+     * @param jsonData The data in JSON format that will be posted to the server
+     */
+    private void sendPost(String path, JSONObject jsonData) {
+        try {
+            String url = BASE_URL + path;
+            URL urlObj = new URL(url);
+            System.out.println("Sending HTTP POST to " + url);
+            HttpURLConnection con = (HttpURLConnection) urlObj.openConnection();
+
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
+
+            OutputStream os = con.getOutputStream();
+            os.write(jsonData.toString().getBytes());
+            os.flush();
+
+            int responseCode = con.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Server reached");
+
+                // Response was OK, read the body (data)
+                InputStream stream = con.getInputStream();
+                String responseBody = convertStreamToString(stream);
+                stream.close();
+                System.out.println("Response from the server:");
+                System.out.println(responseBody);
+            } else {
+                String responseDescription = con.getResponseMessage();
+                System.out.println("Request failed, response code: " + responseCode + " (" + responseDescription + ")");
+            }
+        } catch (ProtocolException e) {
+            System.out.println("Protocol nto supported by the server");
+        } catch (IOException e) {
+            System.out.println("Something went wrong: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
