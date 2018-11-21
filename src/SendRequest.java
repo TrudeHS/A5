@@ -16,8 +16,18 @@ public class SendRequest {
         example.doExampleGet();
         example.post2RandomNumbers();
 
+
+
         //get 1
 
+    }
+
+
+    public void authenticate() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("email", "trudehs@ntnu.no");
+        jsonObject.put("phone", "90972254");
+        sendPost("dkrest/auth", jsonObject);
     }
 
 
